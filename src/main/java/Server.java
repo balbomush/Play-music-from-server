@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.zip.GZIPOutputStream;
 
 public class Server {
 
@@ -16,10 +17,18 @@ public class Server {
             System.out.println("Connected");
             //in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new DataOutputStream(clientSocket.getOutputStream());
-            BufferedInputStream file = new BufferedInputStream(new FileInputStream("C:\\Labs\\untitled\\example.mp3"));
+            BufferedInputStream file = new BufferedInputStream(new FileInputStream("src/main/resources/example.mp3"));
+            ByteArrayOutputStream outtmp = new ByteArrayOutputStream();
+            GZIPOutputStream compression = new GZIPOutputStream(outtmp);
+            //ByteArrayInputStream intmp = new ByteArrayInputStream();
             byte[] byteArray = new byte[1024];
+            int len;
+            while ((len=file.read(byteArray)) != -1){
+                outtmp.write(byteArray,0,len);
+            }
+            ByteArrayInputStream intmp = new ByteArrayInputStream(outtmp.toByteArray());
             while (true){
-                int local = file.read(byteArray);
+                int local = intmp.read(byteArray);
                 //System.out.println(byteArray);
                 //System.out.println(local);
                 if (local != -1) {

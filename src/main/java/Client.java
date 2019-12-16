@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
 
 public class Client {
 
@@ -32,8 +33,15 @@ public class Client {
                 outputStream.write(byteArray,0,count);
             }
             //outputStream.close();
-            System.out.println("start play");
+
             ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
+            ByteArrayOutputStream tmpout = new ByteArrayOutputStream();
+            while ((count=inputStream.read(byteArray)) != -1){
+                tmpout.write(byteArray,0,count);
+            }
+            inputStream = new ByteArrayInputStream(tmpout.toByteArray());
+            System.out.println("start play");
             InputStream potok = new BufferedInputStream(inputStream);
             AudioDevice auDev = new JavaSoundAudioDevice();
             AdvancedPlayer explay = new AdvancedPlayer(potok,auDev);
